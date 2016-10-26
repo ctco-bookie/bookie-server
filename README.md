@@ -1,1 +1,3 @@
 # bookie-server
+
+`npm start`

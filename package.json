@@ -1,0 +1,25 @@
+{
+  "name": "bookie-server",
+  "version": "0.1.0",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ctco-dev/bookie-server.git"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ctco-dev/bookie-server/issues"
+  },
+  "homepage": "https://github.com/ctco-dev/bookie-server#readme",
+  "dependencies": {
+    "bluebird": "3.4.6",
+    "koa": "2.0.0",
+    "koa-morgan": "1.0.1",
+    "koa-response-time": "1.0.2",
+    "koa-router": "7.0.1"
+  }
+}
