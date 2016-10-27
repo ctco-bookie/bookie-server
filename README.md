@@ -7,8 +7,8 @@
 ## Installation
 `$ yarn`
 
-## Development mode
-`$ npm start`
+## Run development mode
+`$ yarn start`
 
 ## Tech stack
 
