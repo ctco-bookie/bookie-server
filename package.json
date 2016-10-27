@@ -5,6 +5,9 @@
   "scripts": {
     "start": "node server.js"
   },
+  "engines": {
+    "node": "6.5.0"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ctco-dev/bookie-server.git"
