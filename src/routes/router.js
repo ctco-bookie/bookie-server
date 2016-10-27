@@ -1,22 +1,20 @@
-const Promise = require('bluebird');
-const co = Promise.coroutine;
+import koaRouter from 'koa-router';
+import {delay}  from 'bluebird';
 
-const router = require('koa-router')();
+const router = koaRouter();
 
-router.get('/', (ctx) => {
-	ctx.status = 200;
-	ctx.body = 'Hello, world';
+router.get('/', async ctx => {
+  ctx.status = 200;
+  ctx.body = 'Hello, world';
 });
 
-router.get('/api/deferred', (ctx) => {
-	return co(function *() {
-		yield Promise.delay(3000);
-		ctx.response.body = 'Hello, world after 3 seconds';
-	})();
+router.get('/api/deferred', async ctx => {
+  await delay(3000);
+  ctx.response.body = 'Hello, world after 3 seconds';
 });
 
-router.get('/api/error', () => {
-	throw new Error('Something went wrong!');
+router.get('/api/error', async () => {
+  throw new Error('Something went wrong!');
 });
 
-module.exports = router;
+export default router;

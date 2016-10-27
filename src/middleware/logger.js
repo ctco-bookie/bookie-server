@@ -1,6 +1,5 @@
-'use strict';
-const Morgan = require('koa-morgan');
+import Morgan from 'koa-morgan';
 
 const logger = Morgan('combined');
 
-module.exports = logger;
+export default logger;

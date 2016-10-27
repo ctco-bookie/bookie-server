@@ -1,11 +1,12 @@
-'use strict';
-const Koa = require('koa');
+import Koa from 'koa';
+import logger from './middleware/logger';
+import errorHandler from './middleware/error-handler';
+import router from './routes/router';
 
 const app = module.exports = new Koa();
 
-app.use(require('./middleware/logger'));
-app.use(require('./middleware/error-handler'));
+app.use(logger);
+app.use(errorHandler);
 
-const router = require('./routes/router');
 app.use(router.routes());
 app.use(router.allowedMethods());
