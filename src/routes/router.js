@@ -16,6 +16,10 @@ router.get('/echo/:message', async ctx => {
   ctx.body = ctx.params.message;
 });
 
+router.get('/secret', async ctx => {
+  ctx.body = process.env.BOOKIE_SECRET;
+});
+
 router.post('/echo', async ctx => {
   ctx.body = ctx.request.body;
 });
