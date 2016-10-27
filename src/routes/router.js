@@ -4,16 +4,23 @@ import {delay}  from 'bluebird';
 const router = koaRouter();
 
 router.get('/', async ctx => {
-  ctx.status = 200;
   ctx.body = 'Hello, world';
 });
 
-router.get('/api/deferred', async ctx => {
+router.get('/deferred', async ctx => {
   await delay(3000);
-  ctx.response.body = 'Hello, world after 3 seconds';
+  ctx.body = 'Hello, world after 3 seconds';
 });
 
-router.get('/api/error', async () => {
+router.get('/echo/:message', async ctx => {
+  ctx.body = ctx.params.message;
+});
+
+router.post('/echo', async ctx => {
+  ctx.body = ctx.request.body;
+});
+
+router.get('/error', async () => {
   throw new Error('Something went wrong!');
 });
 
