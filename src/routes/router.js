@@ -3,7 +3,7 @@ import {delay}  from 'bluebird';
 
 const router = koaRouter();
 
-router.get('/', async ctx => {
+router.get('/', ctx => {
   ctx.body = 'Hello, world';
 });
 
@@ -12,19 +12,19 @@ router.get('/deferred', async ctx => {
   ctx.body = 'Hello, world after 3 seconds';
 });
 
-router.get('/echo/:message', async ctx => {
+router.get('/echo/:message', ctx => {
   ctx.body = ctx.params.message;
 });
 
-router.get('/secret', async ctx => {
+router.get('/secret', ctx => {
   ctx.body = process.env.BOOKIE_SECRET;
 });
 
-router.post('/echo', async ctx => {
+router.post('/echo', ctx => {
   ctx.body = ctx.request.body;
 });
 
-router.get('/error', async () => {
+router.get('/error', () => {
   throw new Error('Something went wrong!');
 });
 
