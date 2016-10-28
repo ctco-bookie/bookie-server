@@ -19,7 +19,7 @@ router.get('/deferred/:timeout', async ctx => {
 });
 
 router.get('/echo/:message', ctx => {
-  ctx.body = ctx.params.message;
+  ctx.body = ctx.params.message + '!!!';
 });
 
 router.get('/secret', ctx => {
