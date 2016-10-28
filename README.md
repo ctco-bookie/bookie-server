@@ -1,16 +1,16 @@
 # bookie-server
 
-## Required software
+## Required Software
 - [yarn](https://yarnpkg.com/)
 - node >= 4.x
 
 ## Installation
 `$ yarn`
 
-## Run development mode
+## Run Development Mode
 `$ yarn start`
 
-## Tech stack
+## Tech Stack
 
 - Koa 2
   - [API](https://github.com/koajs/koa/blob/v2.x/docs/api/index.md)
