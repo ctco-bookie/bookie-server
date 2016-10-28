@@ -12,6 +12,12 @@ router.get('/deferred', async ctx => {
   ctx.body = 'Hello, world after 3 seconds';
 });
 
+router.get('/deferred/:timeout', async ctx => {
+  const timeout = ctx.params.timeout;
+  await delay(timeout * 1000);
+  ctx.body = `Hello, world after ${timeout} seconds`;
+});
+
 router.get('/echo/:message', ctx => {
   ctx.body = ctx.params.message;
 });
