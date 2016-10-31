@@ -1,17 +1,16 @@
-import {promisify}  from 'bluebird';
+import {promisify} from 'bluebird';
 import request from 'request';
 import CalendarDetails from './calendar-details';
 
-export async function get(ctx) {
+export const get = async(ctx) => {
   const calendarName = ctx.params.email;
   const {body: iCal} = await promisify(request)(process.env.CALENDAR_HOST.replace('${calendarName}', calendarName));
 
   ctx.body = new CalendarDetails(
     getCalendarName(calendarName, iCal),
-    isBusy(calendarName, iCal),
-    iCal
+    isBusy(calendarName, iCal)
   );
-}
+};
 
 function getCalendarName(email, iCalData) {
   const [name, ] = email.split("@");

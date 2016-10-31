@@ -1,9 +1,8 @@
 
 class CalendarDetails {
-  constructor(name, busy, rawIcal) {
+  constructor(name, busy) {
     this.name = name;
     this.busy = busy;
-    this.rawIcal = rawIcal;
   }
 }
 

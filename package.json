@@ -22,7 +22,7 @@
     "babel-plugin-transform-es2015-modules-commonjs": "6.18.0",
     "babel-register": "6.18.0",
     "bluebird": "3.4.6",
-    "dotenv": "^2.0.0",
+    "envalid": "2.4.0",
     "koa": "2.0.0",
     "koa-adapter-bluebird": "0.0.1",
     "koa-bodyparser": "next",
