@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "nodemon server.js"
   },
   "engines": {
     "node": ">= 6.5.0"
@@ -30,5 +30,8 @@
     "koa-morgan": "1.0.1",
     "koa-router": "7.0.1",
     "request": "2.76.0"
+  },
+  "devDependencies": {
+    "nodemon": "1.11.0"
   }
 }
