@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "nodemon server.js",
+    "test": "ava",
+    "tw": "ava --watch"
   },
   "engines": {
     "node": ">= 6.5.0"
@@ -32,6 +34,14 @@
     "request": "2.76.0"
   },
   "devDependencies": {
+    "ava": "0.16.0",
     "nodemon": "1.11.0"
+  },
+  "ava": {
+    "require": [
+      "babel-register"
+    ],
+    "verbose": true,
+    "babel": "inherit"
   }
 }

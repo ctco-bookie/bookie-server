@@ -7,12 +7,7 @@ envalid.cleanEnv(process.env, {
   CALENDAR_HOST: url()
 });
 
-require('babel-register')({
-  plugins: [
-    'transform-async-to-generator',
-    'transform-es2015-modules-commonjs'
-  ]
-});
+require('babel-register')();
 
 const app = require('./src/app');
 
