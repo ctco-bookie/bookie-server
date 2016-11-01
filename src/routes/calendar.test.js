@@ -2,13 +2,12 @@ import test from 'ava';
 import moment from 'moment';
 import ical from 'ical';
 import _ from 'lodash';
-import {getCalendarName, todayEvent, findTodaysEvents} from './calendar';
+import {getCalendarInfo, todayEvent, findTodaysEvents} from './calendar';
 import CalendarEvent from './calendar-event';
 
-test('getCalendarName:should parse the name of the calendar', t => {
-  t.is(getCalendarName('room.test@foo.bar'), 'test');
+test('getCalendarInfo:should retrieve room name and number', t => {
+  t.deepEqual(getCalendarInfo('room.name.42@foo.bar'), {roomName: 'name', roomNo: '42'});
 });
-
 
 test('todayEvent:should check for today\'s events', t => {
   const now = moment();
