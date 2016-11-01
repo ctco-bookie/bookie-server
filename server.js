@@ -1,10 +1,11 @@
 'use strict';
 const envalid = require('envalid');
 
-const {url} = envalid;
+const {url, json} = envalid;
 
 envalid.cleanEnv(process.env, {
-  CALENDAR_HOST: url()
+  CALENDAR_HOST: url(),
+  ROOMS: json()
 });
 
 require('babel-register')();
