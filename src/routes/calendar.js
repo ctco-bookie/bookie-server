@@ -11,7 +11,8 @@ export const get = async ctx => {
   const data = await promisify(ical.fromURL)(ctx.env.CALENDAR_HOST.replace('${calendarName}', calendarName), {});
   const events = findTodaysEvents(moment())(data);
 
-  const details = new CalendarDetails(getCalendarName(calendarName), isBusy(events), events);
+  const {roomName, roomNo} = getCalendarInfo(calendarName);
+  const details = new CalendarDetails(roomName, roomNo, isBusy(events), events);
   ctx.body = details;
 };
 
@@ -24,11 +25,11 @@ export const findTodaysEvents = now => {
   };
 };
 
-export const getCalendarName = email => {
+export const getCalendarInfo = email => {
   const [name, ] = email.split("@");
-  const [, roomName, ] = name.split(".");
+  const [, roomName, roomNo] = name.split(".");
 
-  return roomName;
+  return {roomName, roomNo};
 };
 
 export const isEvent = event => event.type === 'VEVENT';
