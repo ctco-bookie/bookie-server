@@ -25,13 +25,15 @@
     "babel-register": "6.18.0",
     "bluebird": "3.4.6",
     "envalid": "2.4.0",
+    "ical": "0.5.0",
     "koa": "2.0.0",
     "koa-adapter-bluebird": "0.0.1",
     "koa-bodyparser": "next",
     "koa-cors": "0.0.16",
     "koa-morgan": "1.0.1",
     "koa-router": "7.0.1",
-    "request": "2.76.0"
+    "lodash": "4.16.5",
+    "moment": "2.15.2"
   },
   "devDependencies": {
     "ava": "0.16.0",

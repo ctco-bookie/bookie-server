@@ -1,7 +1,8 @@
 class CalendarDetails {
-  constructor(name, busy) {
+  constructor(name, busy, events) {
     this.name = name;
     this.busy = busy;
+    this.events = events;
   }
 }
 
