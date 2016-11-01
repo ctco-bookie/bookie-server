@@ -3,10 +3,12 @@
   "version": "0.1.0",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "nodemon server.js",
+    "test": "ava",
+    "tw": "ava --watch"
   },
   "engines": {
-    "node": "6.5.0"
+    "node": ">= 6.5.0"
   },
   "repository": {
     "type": "git",
@@ -18,17 +20,28 @@
   },
   "homepage": "https://github.com/ctco-dev/bookie-server#readme",
   "dependencies": {
-    "axios": "0.15.2",
     "babel-plugin-transform-async-to-generator": "6.16.0",
     "babel-plugin-transform-es2015-modules-commonjs": "6.18.0",
     "babel-register": "6.18.0",
     "bluebird": "3.4.6",
-    "dotenv": "^2.0.0",
+    "envalid": "2.4.0",
     "koa": "2.0.0",
     "koa-adapter-bluebird": "0.0.1",
     "koa-bodyparser": "next",
     "koa-cors": "0.0.16",
     "koa-morgan": "1.0.1",
-    "koa-router": "7.0.1"
+    "koa-router": "7.0.1",
+    "request": "2.76.0"
+  },
+  "devDependencies": {
+    "ava": "0.16.0",
+    "nodemon": "1.11.0"
+  },
+  "ava": {
+    "require": [
+      "babel-register"
+    ],
+    "verbose": true,
+    "babel": "inherit"
   }
 }

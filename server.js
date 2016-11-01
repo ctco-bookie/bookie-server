@@ -1,4 +1,13 @@
 'use strict';
+const envalid = require('envalid');
+
+const {url} = envalid;
+
+envalid.cleanEnv(process.env, {
+  CALENDAR_HOST: url()
+});
+
+require('babel-register')();
 
 require('dotenv').config({silent: true});
 
