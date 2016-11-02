@@ -7,8 +7,8 @@ import {getAll as getRooms} from './rooms.js';
 
 const router = koaRouter();
 
-router.get('/calendar/:email', getCalendar);
-router.get('/calendars/:email', getCalendars);
+router.get('/calendar/:id', getCalendar);
+router.get('/calendars/:id', getCalendars);
 router.get('/rooms', getRooms);
 
 export default router;
