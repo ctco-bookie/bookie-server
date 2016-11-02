@@ -4,6 +4,12 @@ import ical from 'ical';
 import _ from 'lodash';
 import moment from 'moment';
 
+moment.relativeTimeThreshold('s', 60);
+moment.relativeTimeThreshold('m', 60);
+moment.relativeTimeThreshold('h', 24);
+moment.relativeTimeThreshold('d', 30);
+moment.relativeTimeThreshold('M', 12);
+
 export const get = async ctx => {
   const calendarName = ctx.params.email;
 
@@ -12,19 +18,20 @@ export const get = async ctx => {
 
   const {roomName, roomNo} = getCalendarInfo(calendarName);
   const currentEvent = getCurrentEvent(events);
+  const isBusy = !!currentEvent;
 
-  let availableDuration;
-  if (!currentEvent) {
-    availableDuration = availableFor(getNextEvent(events));
+  let nextEvent;
+  if (!isBusy) {
+    nextEvent = getNextEvent(events);
   }
 
   const details = {
     name: roomName,
     no: roomNo,
-    busy: !!currentEvent,
+    busy: isBusy,
     events: events,
-    availableForDuration: (availableDuration) ? availableDuration.asMilliseconds() : null,
-    availableFor: humanizeDuration(availableDuration)
+    availableForDuration: (isBusy) ? null : availableForDuration(nextEvent),
+    availableFor: (isBusy) ? null : availableFor(nextEvent)
   };
 
   ctx.body = details;
@@ -77,21 +84,22 @@ const getNextEvent = events => {
   return _.find(events, e => now.isBefore(moment(e.start)));
 };
 
-const availableFor = event => {
+const availableForDuration = event => {
   if (!event) {
     return;
   }
 
   const now = moment();
-  return moment.duration(moment(event.start).diff(now), 'milliseconds');
+
+  return moment(event.start).diff(now);
 };
 
-const humanizeDuration = duration => {
-  if (!duration) {
+const availableFor = event => {
+  if (!event) {
     return 'the rest of the day';
   }
 
-  return duration.humanize();
+  return moment(event.start).from(moment(), true);
 };
 
 export const todayEvent = today => {
