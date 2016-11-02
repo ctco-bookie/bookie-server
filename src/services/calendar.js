@@ -2,6 +2,7 @@ import {promisify} from 'bluebird';
 import ical from 'ical';
 import _ from 'lodash';
 import moment from './moment';
+import humanizeDuration from 'humanize-duration';
 import Rooms from './rooms';
 
 const getCalendar = async calendarEmail => {
@@ -50,7 +51,7 @@ export const handleReoccurringEvent = now => {
       return _.map(event.rrule.between(now.startOf('day').toDate(), now.endOf('day').toDate()), occurrence => {
         const start = moment(occurrence);
         const end = moment(start).add(duration);
-        return Object.assign({}, event, {start: start.toDate(), end: end.toDate(), duration: duration.humanize()})
+        return Object.assign({}, event, {start: start.toDate(), end: end.toDate()})
       });
     }
   };
@@ -81,7 +82,11 @@ const availableFor = event => {
     return 'the rest of the day';
   }
 
-  return moment(event.start).from(moment(), true);
+  return humanizeDuration(moment(event.start).diff(moment()), {
+    delimiter: ' and ',
+    units: ['h', 'm'],
+    round: true
+  });
 };
 
 export const todayEvent = today => {

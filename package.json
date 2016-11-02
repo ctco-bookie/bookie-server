@@ -25,6 +25,7 @@
     "babel-register": "6.18.0",
     "bluebird": "3.4.6",
     "envalid": "2.4.0",
+    "humanize-duration": "3.9.1",
     "ical": "git+https://github.com/peterbraden/ical.js.git#d6a7b8e5c568acdee2e3a16c2eff4d40e8edba6b",
     "koa": "2.0.0",
     "koa-adapter-bluebird": "0.0.1",
