@@ -1,9 +1,8 @@
 import {promisify} from 'bluebird';
 import ical from 'ical';
 import _ from 'lodash';
-import moment from 'moment';
+import moment from './moment';
 import Rooms from './rooms';
-
 
 const getCalendar = async calendarEmail => {
   const calendarHost = process.env.CALENDAR_HOST;
@@ -12,18 +11,19 @@ const getCalendar = async calendarEmail => {
   const events = findTodaysEvents(moment())(data);
 
   const currentEvent = getCurrentEvent(events);
+  const isBusy = !!currentEvent;
 
-  let availableDuration;
+  let nextEvent;
   if (!currentEvent) {
-    availableDuration = availableFor(getNextEvent(events));
+    nextEvent = getNextEvent(events);
   }
 
   const room = Rooms.byEmail(calendarEmail);
 
   return Object.assign({}, room, {
-    busy: !!currentEvent,
-    availableForDuration: (availableDuration) ? availableDuration.asMilliseconds() : null,
-    availableFor: humanizeDuration(availableDuration)
+    busy: isBusy,
+    availableForDuration: (isBusy) ? null : availableForDuration(nextEvent),
+    availableFor: (isBusy) ? null : availableFor(nextEvent)
   });
 };
 
@@ -66,21 +66,22 @@ const getNextEvent = events => {
   return _.find(events, e => now.isBefore(moment(e.start)));
 };
 
-const availableFor = event => {
+const availableForDuration = event => {
   if (!event) {
     return;
   }
 
   const now = moment();
-  return moment.duration(moment(event.start).diff(now), 'milliseconds');
+
+  return moment(event.start).diff(now);
 };
 
-const humanizeDuration = duration => {
-  if (!duration) {
+const availableFor = event => {
+  if (!event) {
     return 'the rest of the day';
   }
 
-  return duration.humanize();
+  return moment(event.start).from(moment(), true);
 };
 
 export const todayEvent = today => {
