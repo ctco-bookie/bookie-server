@@ -11,6 +11,6 @@ const router = koaRouter();
 router.get('/calendar/:id', getCalendar);
 router.get('/calendars/:id', getCalendars);
 router.put('/calendar/:id/booking', book);
-router.get('/rooms', getRooms);
+router.all('/rooms', getRooms);
 
 export default router;

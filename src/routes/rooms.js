@@ -1,6 +1,8 @@
-import Rooms from '../services/rooms';
+import schema from './room-schema';
+import convert from 'koa-convert';
+import graphqlHTTP from 'koa-graphql';
 
-export const getAll = ctx => {
-  ctx.body = Rooms.all();
-};
-
+export const getAll = convert(graphqlHTTP({
+  schema,
+  graphiql: true
+}));
