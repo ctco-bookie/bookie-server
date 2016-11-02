@@ -22,7 +22,8 @@ const getAvailability = async roomEmail => {
     email: roomEmail,
     busy: isBusy,
     availableForDuration: (isBusy) ? null : availableForDuration(nextEvent),
-    availableFor: (isBusy) ? null : availableFor(nextEvent)
+    availableFor: (isBusy) ? null : availableFor(nextEvent),
+    availableFrom: (isBusy) ? availableFrom(events, currentEvent) : null
   };
 };
 
@@ -95,6 +96,26 @@ const availableFor = event => {
     round: true
   });
 };
+
+const availableFrom = (events, currentEvent) => {
+  const futureEvents = _.filter(events, event => {
+    let now = moment();
+    let end = moment(event.end);
+    return now.isSameOrBefore(end);
+  });
+
+  let availableFrom = moment(futureEvents[0].end);
+  for (let i in futureEvents) {
+    let start = moment(futureEvents[i].start);
+    let end = moment(futureEvents[i].end);
+
+    if (start.diff(availableFrom, 'minutes') < 15) {
+      availableFrom = end;
+    }
+  }
+  return availableFrom;
+};
+
 
 export const todayEvent = today => {
   return event => {
