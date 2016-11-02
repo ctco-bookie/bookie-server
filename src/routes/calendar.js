@@ -1,6 +1,7 @@
 import {all} from 'bluebird';
 import {getCalendar} from '../services/calendar';
 import Rooms from '../services/rooms';
+import _ from 'lodash';
 
 export const get = async ctx => {
   const calendarName = ctx.params.email;
@@ -12,8 +13,15 @@ export const getAll = async ctx => {
   const room = Rooms.byEmail(roomEmail);
   const roomsOnTheSameFloor = Rooms.byFloor(room.floor);
 
-  ctx.body = await all(
+  const calendars = await all(
     roomsOnTheSameFloor.map(room => room.email)
                        .map(getCalendar)
-  ).filter(calendar => !calendar.busy);
+  );
+
+  const masterCalendar = _.find(calendars, calendar => calendar.email.toLowerCase() === roomEmail.toLowerCase());
+  if (masterCalendar) {
+    masterCalendar.master = true;
+  }
+
+  ctx.body = calendars.filter(calendar => calendar.master || !calendar.busy);
 };
