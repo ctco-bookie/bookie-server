@@ -1,5 +1,4 @@
 import {promisify} from 'bluebird';
-import CalendarDetails from './calendar-details';
 import CalendarEvent from './calendar-event';
 import ical from 'ical';
 import _ from 'lodash';
@@ -12,7 +11,22 @@ export const get = async ctx => {
   const events = findTodaysEvents(moment())(data);
 
   const {roomName, roomNo} = getCalendarInfo(calendarName);
-  const details = new CalendarDetails(roomName, roomNo, isBusy(events), events);
+  const currentEvent = getCurrentEvent(events);
+
+  let availableDuration;
+  if (!currentEvent) {
+    availableDuration = availableFor(getNextEvent(events));
+  }
+
+  const details = {
+    name: roomName,
+    no: roomNo,
+    busy: !!currentEvent,
+    events: events,
+    availableForDuration: (availableDuration) ? availableDuration.asMilliseconds() : null,
+    availableFor: humanizeDuration(availableDuration)
+  };
+
   ctx.body = details;
 };
 
@@ -53,9 +67,31 @@ export const handleReoccurringEvent = now => {
   };
 };
 
-const isBusy = events => {
+const getCurrentEvent = events => {
   const now = moment();
-  return !!_.find(events, e => now.isBetween(moment(e.start), moment(e.end)));
+  return _.find(events, e => now.isBetween(moment(e.start), moment(e.end)));
+};
+
+const getNextEvent = events => {
+  const now = moment();
+  return _.find(events, e => now.isBefore(moment(e.start)));
+};
+
+const availableFor = event => {
+  if (!event) {
+    return;
+  }
+
+  const now = moment();
+  return moment.duration(moment(event.start).diff(now), 'milliseconds');
+};
+
+const humanizeDuration = duration => {
+  if (!duration) {
+    return 'the rest of the day';
+  }
+
+  return duration.humanize();
 };
 
 export const todayEvent = today => {
