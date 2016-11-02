@@ -1,125 +1,19 @@
-import {promisify} from 'bluebird';
-import CalendarEvent from './calendar-event';
-import ical from 'ical';
-import _ from 'lodash';
-import moment from 'moment';
+import {all} from 'bluebird';
+import {getCalendar} from '../services/calendar';
+import Rooms from '../services/rooms';
 
 export const get = async ctx => {
   const calendarName = ctx.params.email;
-
-  const data = await promisify(ical.fromURL)(ctx.env.CALENDAR_HOST.replace('${calendarName}', calendarName), {});
-  const events = findTodaysEvents(moment())(data);
-
-  const {roomName, roomNo} = getCalendarInfo(calendarName);
-  const currentEvent = getCurrentEvent(events);
-
-  let availableDuration;
-  if (!currentEvent) {
-    availableDuration = availableFor(getNextEvent(events));
-  }
-
-  const details = {
-    name: roomName,
-    no: roomNo,
-    busy: !!currentEvent,
-    events: events,
-    availableForDuration: (availableDuration) ? availableDuration.asMilliseconds() : null,
-    availableFor: humanizeDuration(availableDuration)
-  };
-
-  ctx.body = details;
+  ctx.body = await getCalendar(calendarName);
 };
 
-export const findTodaysEvents = now => {
-  return data => {
-    const events = _.filter(data, isEvent);
-    const allEvents = _.flatten(_.map(events, handleReoccurringEvent(now)));
-    const todayEvents = _.filter(allEvents, todayEvent(now));
-    return _.sortBy(_.map(todayEvents, createEvent), 'start');
-  };
+export const getAll = async ctx => {
+  const roomEmail = ctx.params.email;
+  const room = Rooms.byEmail(roomEmail);
+  const roomsOnTheSameFloor = Rooms.byFloor(room.floor);
+
+  ctx.body = await all(
+    roomsOnTheSameFloor.map(room => room.email)
+                       .map(getCalendar)
+  ).filter(calendar => !calendar.busy);
 };
-
-export const getCalendarInfo = email => {
-  const [name, ] = email.split("@");
-  const [, roomName, roomNo] = name.split(".");
-
-  return {roomName, roomNo};
-};
-
-export const isEvent = event => event.type === 'VEVENT';
-
-export const handleReoccurringEvent = now => {
-  return event => {
-    if (!event.rrule) {
-      //single instance
-      return [event];
-    } else {
-      //reoccurring
-      const duration = moment.duration(moment(event.end).diff(moment(event.start)));
-      const exceptions = getExceptions(event);
-      const occurrences = _.map(event.rrule.between(now.startOf('day').toDate(), now.endOf('day').toDate()), d => moment(d));
-      const occurrencesWithoutExceptions = _.filter(occurrences, o => {
-        return !_.find(exceptions, e => e.isSame(o, 'minute'));
-      });
-      return _.map(occurrencesWithoutExceptions, occurrence => {
-        const start = moment(occurrence);
-        const end = moment(start).add(duration);
-        return Object.assign({}, event, {start: start.toDate(), end: end.toDate()})
-      });
-    }
-  };
-};
-
-const getExceptions = event => {
-  const dates = _.keys(event.exdate);
-  return _.map(dates, d => moment(d));
-};
-
-const getCurrentEvent = events => {
-  const now = moment();
-  return _.find(events, e => now.isBetween(moment(e.start), moment(e.end)));
-};
-
-const getNextEvent = events => {
-  const now = moment();
-  return _.find(events, e => now.isBefore(moment(e.start)));
-};
-
-const availableFor = event => {
-  if (!event) {
-    return;
-  }
-
-  const now = moment();
-  return moment.duration(moment(event.start).diff(now), 'milliseconds');
-};
-
-const humanizeDuration = duration => {
-  if (!duration) {
-    return 'the rest of the day';
-  }
-
-  return duration.humanize();
-};
-
-export const todayEvent = today => {
-  return event => {
-    if (!(event.start && event.end)) {
-      return false;
-    }
-    return today.startOf('day').isSame(moment(event.start).startOf('day'));
-  };
-};
-
-function createEvent(event) {
-  const e = new CalendarEvent();
-  e.summary = event.summary;
-  e.start = event.start;
-  e.end = event.end;
-  e.isPrivate = !event.summary;
-  e.oranizer = event.organizer && {
-    name: event.organizer.params.CN,
-    email: event.organizer.val
-  };
-  return e;
-}
