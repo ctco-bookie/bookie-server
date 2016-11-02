@@ -4,7 +4,6 @@ import errorHandler from './middleware/error-handler';
 import bodyParser from './middleware/body-parser';
 import cors from './middleware/cors';
 import router from './routes/router';
-import moment from 'moment-timezone';
 
 const app = module.exports = new Koa();
 
@@ -18,5 +17,3 @@ app.use(router.routes());
 app.use(router.allowedMethods());
 
 app.context.env = process.env;
-
-moment.tz.setDefault(process.env.CALENDAR_TZ);
