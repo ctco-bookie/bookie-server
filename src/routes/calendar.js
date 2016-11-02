@@ -2,12 +2,6 @@ import {all} from 'bluebird';
 import {getCalendar} from '../services/calendar';
 import Rooms from '../services/rooms';
 
-moment.relativeTimeThreshold('s', 60);
-moment.relativeTimeThreshold('m', 60);
-moment.relativeTimeThreshold('h', 24);
-moment.relativeTimeThreshold('d', 30);
-moment.relativeTimeThreshold('M', 12);
-
 export const get = async ctx => {
   const calendarName = ctx.params.email;
   ctx.body = await getCalendar(calendarName);
