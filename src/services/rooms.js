@@ -17,7 +17,6 @@ const isNumeric = value => {
   return !isNaN(str);
 };
 
-
 export default {
   byEmail,
   byFloor,
