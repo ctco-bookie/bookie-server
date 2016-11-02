@@ -2,7 +2,7 @@ import {createICal} from './event-generator';
 import nodemailer from 'nodemailer';
 import Rooms from './rooms';
 
-export const createMeeting = async (id, bookForMinutes = 15) => {
+export const bookRoom = async (id, bookForMinutes = 15) => {
   const room = Rooms.byId(id);
   const organizerName = process.env.MEETING_ORGANIZER;
   const organizerEmail = process.env.MEETING_ORGANIZER_EMAIL;

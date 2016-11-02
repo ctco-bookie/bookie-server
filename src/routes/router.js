@@ -3,14 +3,14 @@ import {
   get as getCalendar,
   book as book,
   getAll as getCalendars
-} from './calendar.js';
-import {getAll as getRooms} from './rooms.js';
+} from './room-availibility.js';
+import graphQl from './graphql.js';
 
 const router = koaRouter();
 
-router.get('/calendar/:id', getCalendar);
-router.get('/calendars/:id', getCalendars);
+router.get('/calendar/:roomId', getCalendar);
+router.get('/calendars/:roomId', getCalendars);
 router.put('/calendar/:id/booking', book);
-router.all('/rooms', getRooms);
+router.all('/graphql', graphQl);
 
 export default router;

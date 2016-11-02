@@ -2,7 +2,6 @@ import test from 'ava';
 import {createICal} from './event-generator';
 
 test('createICal:should create calendar', t => {
-  console.log(createICal);
   const iCal = createICal({
     organizerName: 'John Smith',
     organizerEmail: 'john.smith@example.com',
