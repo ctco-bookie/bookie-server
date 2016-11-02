@@ -31,3 +31,5 @@ Travis CI: [![Build Status](https://api.travis-ci.org/ctco-dev/bookie-server.svg
   - [TC39 proposal](https://tc39.github.io/ecmascript-asyncawait/)
 - AVA
   - [GitHub](https://github.com/avajs/ava)
+- GraphQl
+  - [Documentation](http://graphql.org/learn/)

@@ -4,7 +4,7 @@ import ical from 'ical';
 import {
   todayEvent,
   findTodaysEvents
-} from './calendar';
+} from './room-availability';
 
 test('todayEvent:should check for today\'s events', t => {
   const now = moment();
