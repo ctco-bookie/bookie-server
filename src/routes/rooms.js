@@ -1,6 +1,6 @@
-import rooms from '../rooms';
+import Rooms from '../services/rooms';
 
-export const get = async ctx => {
-    ctx.body = rooms;
+export const getAll = ctx => {
+  ctx.body = Rooms.all();
 };
 

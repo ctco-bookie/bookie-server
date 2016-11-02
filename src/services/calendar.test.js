@@ -1,24 +1,24 @@
 import test from 'ava';
 import moment from 'moment';
 import ical from 'ical';
-import _ from 'lodash';
-import {getCalendarInfo, todayEvent, findTodaysEvents} from './calendar';
-import CalendarEvent from './calendar-event';
-
-test('getCalendarInfo:should retrieve room name and number', t => {
-  t.deepEqual(getCalendarInfo('room.name.42@foo.bar'), {roomName: 'name', roomNo: '42'});
-});
+import {
+  todayEvent,
+  findTodaysEvents
+} from './calendar';
 
 test('todayEvent:should check for today\'s events', t => {
   const now = moment();
   const yesterday = moment().subtract(1, 'day');
-  const
-    e1 = new CalendarEvent();
-  e1.start = yesterday.subtract(1, 'hour').toDate();
-  e1.end = yesterday.subtract(1, 'hour').toDate();
-  const e2 = new CalendarEvent();
-  e2.start = now.subtract(1, 'hour').toDate();
-  e2.end = now.subtract(1, 'hour').toDate();
+  const e1 = {
+    start: yesterday.subtract(1, 'hour').toDate(),
+    end: yesterday.subtract(1, 'hour').toDate()
+  };
+
+  const e2 = {
+    start: now.subtract(1, 'hour').toDate(),
+    end: now.subtract(1, 'hour').toDate()
+
+  };
 
   t.is(todayEvent(now)(e1), false);
   t.is(todayEvent(now)(e2), true);
