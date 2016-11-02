@@ -3,12 +3,11 @@ import ical from 'ical';
 import _ from 'lodash';
 import moment from './moment';
 import humanizeDuration from 'humanize-duration';
-import Rooms from './rooms';
 
-const getCalendar = async calendarEmail => {
+const getAvailability = async roomEmail => {
   const calendarHost = process.env.CALENDAR_HOST;
 
-  const data = await promisify(ical.fromURL)(calendarHost.replace('${calendarName}', calendarEmail), {});
+  const data = await promisify(ical.fromURL)(calendarHost.replace('${calendarName}', roomEmail), {});
   const events = findTodaysEvents(moment())(data);
 
   const currentEvent = getCurrentEvent(events);
@@ -19,13 +18,12 @@ const getCalendar = async calendarEmail => {
     nextEvent = getNextEvent(events);
   }
 
-  const room = Rooms.byEmail(calendarEmail);
-
-  return Object.assign({}, room, {
+  return {
+    email: roomEmail,
     busy: isBusy,
     availableForDuration: (isBusy) ? null : availableForDuration(nextEvent),
     availableFor: (isBusy) ? null : availableFor(nextEvent)
-  });
+  };
 };
 
 export const findTodaysEvents = now => {
@@ -117,4 +115,4 @@ function createEvent(event) {
   });
 }
 
-export {getCalendar}
+export {getAvailability}
