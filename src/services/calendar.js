@@ -47,14 +47,23 @@ export const handleReoccurringEvent = now => {
     } else {
       //reoccurring
       const duration = moment.duration(moment(event.end).diff(moment(event.start)));
-
-      return _.map(event.rrule.between(now.startOf('day').toDate(), now.endOf('day').toDate()), occurrence => {
+      const exceptions = getExceptions(event);
+      const occurrences = _.map(event.rrule.between(now.startOf('day').toDate(), now.endOf('day').toDate()), d => moment(d));
+      const occurrencesWithoutExceptions = _.filter(occurrences, o => {
+        return !_.find(exceptions, e => e.isSame(o, 'minute'));
+      });
+      return _.map(occurrencesWithoutExceptions, occurrence => {
         const start = moment(occurrence);
         const end = moment(start).add(duration);
         return Object.assign({}, event, {start: start.toDate(), end: end.toDate()})
       });
     }
   };
+};
+
+const getExceptions = event => {
+  const dates = _.keys(event.exdate);
+  return _.map(dates, d => moment(d));
 };
 
 const getCurrentEvent = events => {
