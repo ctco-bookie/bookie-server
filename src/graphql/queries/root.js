@@ -1,7 +1,8 @@
 import {
   GraphQLObjectType,
   GraphQLInt,
-  GraphQLList
+  GraphQLList,
+  GraphQLNonNull
 } from 'graphql';
 import {
   roomAvailabilityWithFloorOptions,
@@ -11,7 +12,7 @@ import Room from '../types/room'
 
 const roomIdParam = {
   roomId: {
-    type: GraphQLInt
+    type: new GraphQLNonNull(GraphQLInt)
   }
 };
 
