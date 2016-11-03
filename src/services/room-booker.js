@@ -7,13 +7,19 @@ import Rooms from './rooms';
 
 export const bookRoom = async({roomId, bookForMinutes}) => {
   const room = Rooms.byId(roomId);
+  if (!room) {
+    return {
+      success: false,
+      message: `Room ${roomId} not found`
+    };
+  }
   const startDate = moment();
   const endDate = moment(roundToNext15Minutes(startDate)).add(bookForMinutes, 'minutes');
   const availability = await getAvailability(room.email);
   if (!isBookable(availability, endDate)) {
     return {
       success: false,
-      message: 'Room is not bookable'
+      message: `Room ${room.name} (${roomId}) is not bookable`
     };
   }
   const organizerName = process.env.MEETING_ORGANIZER;
@@ -28,7 +34,7 @@ export const bookRoom = async({roomId, bookForMinutes}) => {
     const duration = bookedForDuration(startDate, endDate);
     return {
       success: true,
-      message: `Room booked for ${duration} till ${endDate.format('HH:mm')}`,
+      message: `Room ${room.name} (${roomId}) is booked for ${duration} till ${endDate.format('HH:mm')}`,
       start: startDate,
       end: endDate,
       duration: duration
