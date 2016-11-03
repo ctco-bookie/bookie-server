@@ -1,12 +1,11 @@
 import ical from 'ical-generator';
-import moment from 'moment';
 
-export const createICal = ({organizerName, organizerEmail, bookForMinutes}) => {
+export const createICal = ({start, end, organizerName, organizerEmail}) => {
   const cal = ical({
     events: [
       {
-        start: moment().toDate(),
-        end: moment().add(bookForMinutes, 'minute').toDate(),
+        start: start.toDate(),
+        end: end.toDate(),
         summary: 'Ad-hoc',
         method: 'REQUEST',
         organizer: {
