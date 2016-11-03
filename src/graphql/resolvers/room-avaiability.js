@@ -2,8 +2,11 @@ import {all} from 'bluebird';
 import {getAvailability} from '../../services/room-availability';
 import Rooms from '../../services/rooms';
 
-const roomAvailabilityWithFloorOptions = async(_, {roomId}) => {
+const roomAvailabilityWithFloorOptions = async (_, {roomId}) => {
   const masterRoom = Rooms.byId(roomId);
+  if (!masterRoom) {
+    return [];
+  }
 
   const mailAddressesByFloor = Rooms.byFloor(masterRoom.floor)
                                     .map(room => room.email);
@@ -19,8 +22,11 @@ const roomAvailabilityWithFloorOptions = async(_, {roomId}) => {
                        .sort((a, b) => a.number - b.number);
 };
 
-const roomAvailability = async(_, {roomId}) => {
+const roomAvailability = async (_, {roomId}) => {
   const room = Rooms.byId(roomId);
+  if (!room) {
+    return {};
+  }
 
   const roomAvailability = await getAvailability(room.email);
   return Object.assign({}, roomAvailability, room);
