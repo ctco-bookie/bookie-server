@@ -2,20 +2,18 @@ import {
   GraphQLObjectType,
   GraphQLInt,
   GraphQLList,
-  GraphQLNonNull
+  GraphQLNonNull,
+  GraphQLBoolean,
+  GraphQLEnumType
 } from 'graphql';
 import {
-  roomAvailabilityWithFloorOptions,
-  roomAvailability
-} from '../resolvers/room-avaiability';
-import {
-  getRoom,
-  getAllRooms
+  resolveRoom,
+  resolveRooms
 } from '../resolvers/room';
 import Room from '../types/room'
 
-const roomIdParam = {
-  roomId: {
+const roomNumberParam = {
+  roomNumber: {
     type: new GraphQLNonNull(GraphQLInt)
   }
 };
@@ -23,24 +21,22 @@ const roomIdParam = {
 const Query = new GraphQLObjectType({
   name: 'Queries',
   fields: () => ({
-    roomAvailabilityWithFloorOptions: {
-      type: new GraphQLList(Room),
-      args: roomIdParam,
-      resolve: roomAvailabilityWithFloorOptions
-    },
-    roomAvailability: {
-      type: Room,
-      args: roomIdParam,
-      resolve: roomAvailability
-    },
     room: {
       type: Room,
-      args: roomIdParam,
-      resolve: getRoom
+      args: roomNumberParam,
+      resolve: resolveRoom
     },
     rooms: {
+      args: {
+        floorMasterRoomNumber: {
+          type: GraphQLInt
+        },
+        busy: {
+          type: GraphQLBoolean
+        }
+      },
       type: new GraphQLList(Room),
-      resolve: getAllRooms
+      resolve: resolveRooms
     }
   })
 });

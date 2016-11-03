@@ -1,14 +1,31 @@
 import Rooms from '../../services/rooms';
 
-const getRoom = async (_, {roomId}) => {
-  return Rooms.byId(roomId);
+const resolveRoom = async(_, {roomNumber}) => {
+  return Rooms.byNumber(roomNumber);
 };
 
-const getAllRooms = async () => {
-  return Rooms.all();
+const resolveRooms = async(_, {floorMasterRoomNumber, busy}) => {
+  let rooms;
+
+  if (floorMasterRoomNumber) {
+    const master = Rooms.byNumber(floorMasterRoomNumber);
+    if (!master) {
+      return []
+    }
+    rooms = Rooms.byFloor(master.floor)
+                 .filter(room => room.number !== master.number);
+  } else {
+    rooms = Rooms.all();
+  }
+
+  if (!!busy){
+    rooms = rooms.filter(room => room.busy);
+  }
+
+  return rooms;
 };
 
 export {
-  getRoom,
-  getAllRooms
+  resolveRoom,
+  resolveRooms
 };

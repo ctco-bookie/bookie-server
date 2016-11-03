@@ -1,5 +1,5 @@
 import BookResult from '../types/book-result';
-import {booker} from '../resolvers/room-booking';
+import {resolveRoomBooking} from '../resolvers/room-booking';
 import {
   GraphQLInt,
   GraphQLObjectType,
@@ -12,10 +12,10 @@ const Mutation = new GraphQLObjectType({
     bookRoom: {
       type: BookResult,
       args: {
-        roomId: {type: new GraphQLNonNull(GraphQLInt)},
+        roomNumber: {type: new GraphQLNonNull(GraphQLInt)},
         bookForMinutes: {type: GraphQLInt}
       },
-      resolve: booker
+      resolve: resolveRoomBooking
     }
   }),
 });
