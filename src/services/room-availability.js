@@ -113,7 +113,8 @@ const availableFrom = (events, currentEvent) => {
       availableFrom = end;
     }
   }
-  return availableFrom;
+
+  return availableFrom.format('HH:mm');
 };
 
 
