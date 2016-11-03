@@ -1,7 +1,7 @@
 import {bookRoom} from '../../services/room-booker';
 
-const booker = async (_, {roomId, bookForMinutes = 15}) => {
-  return bookRoom({roomId, bookForMinutes});
+const resolveRoomBooking = async (_, {roomNumber, bookForMinutes = 15}) => {
+  return bookRoom({roomNumber, bookForMinutes});
 };
 
-export {booker}
+export {resolveRoomBooking}
