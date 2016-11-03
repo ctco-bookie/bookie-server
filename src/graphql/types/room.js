@@ -6,7 +6,7 @@ import {
 } from 'graphql';
 
 const Room = new GraphQLObjectType({
-  name: 'room',
+  name: 'Room',
   fields: () => ({
     name: {
       type: GraphQLString
@@ -33,6 +33,9 @@ const Room = new GraphQLObjectType({
       type: GraphQLInt
     },
     availableFor: {
+      type: GraphQLString
+    },
+    availableFrom: {
       type: GraphQLString
     }
   })

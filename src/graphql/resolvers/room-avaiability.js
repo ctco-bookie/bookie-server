@@ -15,7 +15,8 @@ const roomAvailabilityWithFloorOptions = async(_, {roomId}) => {
     masterAvailability.master = true;
   }
   return availabilities.filter(availability => availability.master || !availability.busy)
-                       .map(availability => Object.assign({}, availability, Rooms.byEmail(availability.email)));
+                       .map(availability => Object.assign({}, availability, Rooms.byEmail(availability.email)))
+                       .sort((a, b) => a.number - b.number);
 };
 
 const roomAvailability = async(_, {roomId}) => {
