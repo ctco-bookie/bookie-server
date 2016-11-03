@@ -16,7 +16,7 @@ const roomIdParam = {
 };
 
 const Query = new GraphQLObjectType({
-  name: 'RootQueryType',
+  name: 'Queries',
   fields: () => ({
     roomAvailabilityWithFloorOptions: {
       type: new GraphQLList(Room),

@@ -3,8 +3,8 @@ import nodemailer from 'nodemailer';
 import moment from 'moment';
 import Rooms from './rooms';
 
-export const bookRoom = async(id, bookForMinutes = 15) => {
-  const room = Rooms.byId(id);
+export const bookRoom = async({roomId, bookForMinutes = 15}) => {
+  const room = Rooms.byId(roomId);
   const startDate = roundToNext15Minutes(moment());
   const organizerName = process.env.MEETING_ORGANIZER;
   const organizerEmail = process.env.MEETING_ORGANIZER_EMAIL;
