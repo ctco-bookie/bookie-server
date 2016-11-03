@@ -8,6 +8,10 @@ import {
   roomAvailabilityWithFloorOptions,
   roomAvailability
 } from '../resolvers/room-avaiability';
+import {
+  getRoom,
+  getAllRooms
+} from '../resolvers/room';
 import Room from '../types/room'
 
 const roomIdParam = {
@@ -28,6 +32,15 @@ const Query = new GraphQLObjectType({
       type: Room,
       args: roomIdParam,
       resolve: roomAvailability
+    },
+    room: {
+      type: Room,
+      args: roomIdParam,
+      resolve: getRoom
+    },
+    rooms: {
+      type: new GraphQLList(Room),
+      resolve: getAllRooms
     }
   })
 });
