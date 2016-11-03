@@ -1,20 +1,62 @@
 import {createICal} from './event-generator';
+import {getAvailability} from './room-availability';
 import nodemailer from 'nodemailer';
 import moment from 'moment';
+import humanizeDuration from 'humanize-duration';
 import Rooms from './rooms';
 
-export const bookRoom = async({roomId, bookForMinutes = 15}) => {
+export const bookRoom = async({roomId, bookForMinutes}) => {
   const room = Rooms.byId(roomId);
-  const startDate = roundToNext15Minutes(moment());
+  const startDate = moment();
+  const endDate = moment(roundToNext15Minutes(startDate)).add(bookForMinutes, 'minutes');
+  const availability = await getAvailability(room.email);
+  if (!isBookable(availability, endDate)) {
+    return {
+      success: false,
+      message: 'Room is not bookable'
+    };
+  }
   const organizerName = process.env.MEETING_ORGANIZER;
   const organizerEmail = process.env.MEETING_ORGANIZER_EMAIL;
   const iCal = createICal({
-    startDate: startDate,
+    start: startDate,
+    end: endDate,
     organizerName: organizerName,
     organizerEmail: organizerEmail,
-    bookForMinutes: bookForMinutes
   });
-  return sendInvite(iCal, room.email);
+  return sendInvite(iCal, room.email).then(() => {
+    const duration = bookedForDuration(startDate, endDate);
+    return {
+      success: true,
+      message: `Room booked for ${duration} till ${endDate.format('HH:mm')}`,
+      start: startDate,
+      end: endDate,
+      duration: duration
+    }
+  });
+};
+
+export const isBookable = (availability, end) => {
+  if (availability.busy) {
+    // Room is booked, no way to do ad-hoc meeting
+    return false;
+  } else if (!availability.availableForDuration) {
+    //Room is available till end of the day
+    return true;
+  } else {
+    //Room is free now, need to check if it is available
+    const availableTill = moment().add(availability.availableForDuration);
+    return end.isSameOrBefore(availableTill);
+  }
+};
+
+export const bookedForDuration = (start, end) => {
+  return humanizeDuration(end.diff(start), {
+    delimiter: ' and ',
+    units: ['h', 'm'],
+    round: true
+  });
+
 };
 
 export const roundToNext15Minutes = (now) => {
