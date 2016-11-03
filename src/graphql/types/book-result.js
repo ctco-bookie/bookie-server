@@ -12,6 +12,15 @@ const BookResult = new GraphQLObjectType({
     },
     message: {
       type: GraphQLString
+    },
+    start: {
+      type: GraphQLString
+    },
+    end: {
+      type: GraphQLString
+    },
+    duration: {
+      type: GraphQLString
     }
   })
 });
