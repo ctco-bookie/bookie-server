@@ -1,6 +1,12 @@
 import ical from 'ical-generator';
 
-export const createICal = ({start, end, organizerName, organizerEmail, calendarEmail}) => {
+export const createICal = ({
+  start,
+  end,
+  organizerName,
+  organizerEmail,
+  calendarName,
+  calendarEmail}) => {
   const cal = ical({
     events: [
       {
@@ -14,7 +20,7 @@ export const createICal = ({start, end, organizerName, organizerEmail, calendarE
         },
         attendees: [
           {
-            name: calendarEmail,
+            name: calendarName,
             email: calendarEmail
           }
         ]
