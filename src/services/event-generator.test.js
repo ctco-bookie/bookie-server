@@ -7,10 +7,12 @@ test('createICal:should create calendar', t => {
     start: moment(),
     end: moment().add(15, 'minutes'),
     organizerName: 'John Smith',
-    organizerEmail: 'john.smith@example.com'
+    organizerEmail: 'john.smith@example.com',
+    calendarName: 'No reply',
+    calendarEmail: 'noreply@example.com'
   });
   const iCalMessage = iCal.toString();
-  t.true(iCalMessage.indexOf('John Smith') > 0);
-  t.true(iCalMessage.indexOf('Ad-hoc') > 0);
+  t.true(iCalMessage.indexOf('ORGANIZER;CN="John Smith":mailto:john.smith@example.com') > 0);
+  t.true(iCalMessage.indexOf('ATTENDEE;ROLE=REQ-PARTICIPANT;CN="No reply":MAILTO:noreply@example.com') > 0);
 });
 
