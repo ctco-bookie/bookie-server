@@ -29,6 +29,7 @@ export const bookRoom = async({roomNumber, bookForMinutes}) => {
     end: endDate,
     organizerName: organizerName,
     organizerEmail: organizerEmail,
+    calendarEmail: room.email
   });
   return sendInvite(iCal, room.email).then(() => {
     const duration = bookedForDuration(startDate, endDate);
@@ -86,9 +87,9 @@ const sendInvite = (iCal, calendarEmail) => {
 
   const mail = {
     from: process.env.MEETING_ORGANIZER_EMAIL,
-    to: calendarEmail,
+    to: `${calendarEmail}, ${process.env.MEETING_ORGANIZER_EMAIL}`,
     subject: 'Ad-hoc meeting',
-    text: 'body',
+    text: 'Ad-hoc meeting created using Bookie application',
     headers: {
       method: 'REQUEST',
       charset: 'UTF-8',
