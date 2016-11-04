@@ -29,6 +29,7 @@ export const bookRoom = async({roomNumber, bookForMinutes}) => {
     end: endDate,
     organizerName: organizerName,
     organizerEmail: organizerEmail,
+    calendarName: room.name,
     calendarEmail: room.email
   });
   return sendInvite(iCal, room.email).then(() => {
