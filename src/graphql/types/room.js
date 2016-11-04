@@ -4,7 +4,7 @@ import {
   GraphQLString,
 } from 'graphql';
 import Availability from './availability';
-import {resolveAvailability} from '../resolvers/avaiability';
+import resolveAvailability from '../resolvers/avaiability';
 
 const Room = new GraphQLObjectType({
   name: 'Room',

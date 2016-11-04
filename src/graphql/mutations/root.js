@@ -1,5 +1,5 @@
 import BookResult from '../types/book-result';
-import {resolveRoomBooking} from '../resolvers/room-booking';
+import resolveRoomBooking from '../resolvers/room-booking';
 import {
   GraphQLInt,
   GraphQLObjectType,
