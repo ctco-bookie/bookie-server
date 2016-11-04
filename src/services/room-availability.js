@@ -30,7 +30,7 @@ const getAvailability = async roomEmail => {
     busy: isBusy,
     availableForDuration: (isBusy) ? null : availableForMillis,
     availableFor: (isBusy) ? null : availableFor(nextEvent),
-    availableFrom: (isBusy) ? availableFrom(events, currentEvent) : null
+    availableFrom: (isBusy) ? availableFrom(events) : null
   };
 };
 
@@ -98,13 +98,13 @@ const availableFor = event => {
   }
 
   return humanizeDuration(moment(event.start).diff(moment()), {
-    delimiter: ' and ',
+    delimiter: ' ',
     units: ['h', 'm'],
     round: true
   });
 };
 
-const availableFrom = (events, currentEvent) => {
+const availableFrom = (events) => {
   const futureEvents = _.filter(events, event => {
     let now = moment();
     let end = moment(event.end);
