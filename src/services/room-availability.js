@@ -4,6 +4,8 @@ import _ from 'lodash';
 import moment from './moment';
 import humanizeDuration from 'humanize-duration';
 
+const THRESHOLD = 900000; // 15 mins threshold in millis
+
 const getAvailability = async roomEmail => {
   const calendarHost = process.env.CALENDAR_HOST;
 
@@ -11,17 +13,22 @@ const getAvailability = async roomEmail => {
   const events = findTodaysEvents(moment())(data);
 
   const currentEvent = getCurrentEvent(events);
-  const isBusy = !!currentEvent;
+  let isBusy = !!currentEvent;
 
   let nextEvent;
   if (!currentEvent) {
     nextEvent = getNextEvent(events);
   }
 
+  let availableForMillis = availableForDuration(nextEvent);
+  if( availableForMillis < THRESHOLD) {
+    isBusy = true;
+  }
+
   return {
     email: roomEmail,
     busy: isBusy,
-    availableForDuration: (isBusy) ? null : availableForDuration(nextEvent),
+    availableForDuration: (isBusy) ? null : availableForMillis,
     availableFor: (isBusy) ? null : availableFor(nextEvent),
     availableFrom: (isBusy) ? availableFrom(events, currentEvent) : null
   };
@@ -109,7 +116,7 @@ const availableFrom = (events, currentEvent) => {
     let start = moment(futureEvents[i].start);
     let end = moment(futureEvents[i].end);
 
-    if (start.diff(availableFrom, 'minutes') < 15) {
+    if (start.diff(availableFrom) < THRESHOLD) {
       availableFrom = end;
     }
   }
