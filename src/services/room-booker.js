@@ -60,7 +60,7 @@ export const isBookable = (availability, end) => {
 
 export const bookedForDuration = (start, end) => {
   return humanizeDuration(end.diff(start), {
-    delimiter: ' and ',
+    delimiter: ' ',
     units: ['h', 'm'],
     round: true
   });
