@@ -19,7 +19,7 @@ export const bookRoom = async({roomNumber, bookForMinutes}) => {
   if (!isBookable(availability, endDate)) {
     return {
       success: false,
-      message: `Room ${room.name} (${roomNumber}) is not bookable`
+      message: `Room ${room.name} (${roomNumber}) cannot be booked`
     };
   }
   const organizerName = process.env.MEETING_ORGANIZER;
@@ -89,7 +89,11 @@ const sendInvite = (iCal, calendarEmail) => {
     from: process.env.MEETING_ORGANIZER_EMAIL,
     to: `${calendarEmail}, ${process.env.MEETING_ORGANIZER_EMAIL}`,
     subject: 'Ad-hoc meeting',
-    text: 'Ad-hoc meeting created using Bookie application',
+    text:
+`Ad-hoc meeting created using Bookie application
+
+You can contact ${process.env.MEETING_ORGANIZER_EMAIL} to cancel the meeting if it was created by mistake
+`,
     headers: {
       method: 'REQUEST',
       charset: 'UTF-8',
