@@ -13,15 +13,6 @@ envalid.cleanEnv(process.env, {
 
 require('babel-register')();
 
-require('dotenv').config({silent: true});
-
-require('babel-register')({
-  plugins: [
-    'transform-async-to-generator',
-    'transform-es2015-modules-commonjs'
-  ]
-});
-
 const app = require('./src/app');
 
 const port = process.env.PORT || 3000;
