@@ -1,5 +1,5 @@
-import BookResult from '../types/book-result';
-import resolveRoomBooking from '../resolvers/room-booking';
+import BookResult from './types/book-result';
+import resolveRoomBooking from './resolvers/room-booking';
 import {
   GraphQLInt,
   GraphQLObjectType,
@@ -7,7 +7,7 @@ import {
 } from 'graphql';
 
 const Mutation = new GraphQLObjectType({
-  name: 'Mutations',
+  name: 'Mutation',
   fields: () => ({
     bookRoom: {
       type: BookResult,
