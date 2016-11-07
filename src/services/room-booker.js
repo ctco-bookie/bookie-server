@@ -5,7 +5,7 @@ import moment from 'moment';
 import humanizeDuration from 'humanize-duration';
 import Rooms from './rooms';
 
-export const bookRoom = async ({roomNumber, bookForMinutes}) => {
+export const bookRoom = async ({roomNumber, bookForMinutes, dryRun}) => {
   const room = Rooms.byNumber(roomNumber);
   if (!room) {
     return {
@@ -32,16 +32,19 @@ export const bookRoom = async ({roomNumber, bookForMinutes}) => {
     calendarName: room.name,
     calendarEmail: room.email
   });
-  return sendInvite(iCal, room.email).then(() => {
-    const duration = bookedForDuration(startDate, endDate);
-    return {
-      success: true,
-      message: `Room ${room.name} (${roomNumber}) is booked for ${duration} till ${endDate.format('HH:mm')}`,
-      start: startDate,
-      end: endDate,
-      duration: duration
-    }
-  });
+
+  if (!dryRun) {
+    await sendInvite(iCal, room.email);
+  }
+
+  const duration = bookedForDuration(startDate, endDate);
+  return {
+    success: true,
+    message: `${dryRun ? '(Dry Run)' : ''}Room ${room.name} (${roomNumber}) is booked for ${duration} till ${endDate.format('HH:mm')}`,
+    start: startDate,
+    end: endDate,
+    duration
+  }
 };
 
 export const isBookable = (availability, end) => {
@@ -64,7 +67,6 @@ export const bookedForDuration = (start, end) => {
     units: ['h', 'm'],
     round: true
   });
-
 };
 
 export const roundToNext15Minutes = (now) => {
@@ -108,6 +110,4 @@ You can contact ${process.env.MEETING_ORGANIZER_EMAIL} to cancel the meeting if 
     ]
   };
   return transport.sendMail(mail);
-
 };
-
