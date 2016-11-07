@@ -1,7 +1,8 @@
 import {
   GraphQLObjectType,
   GraphQLInt,
-  GraphQLList
+  GraphQLList,
+  GraphQLNonNull
 } from 'graphql';
 import resolveRoom from './resolvers/room';
 import resolveRooms from './resolvers/rooms';
@@ -13,7 +14,7 @@ const Query = new GraphQLObjectType({
     room: {
       type: Room,
       args: {
-        roomNumber: {type: GraphQLInt}
+        roomNumber: {type: new GraphQLNonNull(GraphQLInt)}
       },
       resolve: resolveRoom
     },
