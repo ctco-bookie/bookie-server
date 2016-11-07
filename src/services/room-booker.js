@@ -5,7 +5,7 @@ import moment from 'moment';
 import humanizeDuration from 'humanize-duration';
 import Rooms from './rooms';
 
-export const bookRoom = async({roomNumber, bookForMinutes}) => {
+export const bookRoom = async ({roomNumber, bookForMinutes}) => {
   const room = Rooms.byNumber(roomNumber);
   if (!room) {
     return {
