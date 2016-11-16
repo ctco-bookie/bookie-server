@@ -1,11 +1,11 @@
-import {createICal} from './event-generator';
-import {getAvailability} from './room-availability';
 import nodemailer from 'nodemailer';
 import moment from 'moment';
 import humanizeDuration from 'humanize-duration';
+import {createICal} from './event-generator';
+import {getAvailability} from './room-availability';
 import Rooms from './rooms';
 
-export const bookRoom = async ({roomNumber, bookForMinutes, dryRun}) => {
+const bookRoom = async ({roomNumber, bookForMinutes, dryRun}) => {
   const room = Rooms.byNumber(roomNumber);
   if (!room) {
     return {
@@ -13,10 +13,11 @@ export const bookRoom = async ({roomNumber, bookForMinutes, dryRun}) => {
       message: `Room ${roomNumber} not found`
     };
   }
-  const startDate = moment();
-  const endDate = moment(roundToNext15Minutes(startDate)).add(bookForMinutes, 'minutes');
+
+  const start = moment();
+  const end = moment(roundToNext15Minutes(start)).add(bookForMinutes, 'minutes');
   const availability = await getAvailability(room.email);
-  if (!isBookable(availability, endDate)) {
+  if (!isBookable(availability, end)) {
     return {
       success: false,
       message: `Room ${room.name} (${roomNumber}) cannot be booked`
@@ -25,10 +26,10 @@ export const bookRoom = async ({roomNumber, bookForMinutes, dryRun}) => {
   const organizerName = process.env.MEETING_ORGANIZER;
   const organizerEmail = process.env.MEETING_ORGANIZER_EMAIL;
   const iCal = createICal({
-    start: startDate,
-    end: endDate,
-    organizerName: organizerName,
-    organizerEmail: organizerEmail,
+    start,
+    end,
+    organizerName,
+    organizerEmail,
     calendarName: room.name,
     calendarEmail: room.email
   });
@@ -37,17 +38,17 @@ export const bookRoom = async ({roomNumber, bookForMinutes, dryRun}) => {
     await sendInvite(iCal, room.email);
   }
 
-  const duration = bookedForDuration(startDate, endDate);
+  const duration = bookedForDuration(start, end);
   return {
     success: true,
-    message: `${dryRun ? '(Dry Run)' : ''}Room ${room.name} (${roomNumber}) is booked for ${duration} till ${endDate.format('HH:mm')}`,
-    start: startDate,
-    end: endDate,
+    message: `${dryRun ? '(Dry Run) ' : ''}Room ${room.name} (${roomNumber}) is booked for ${duration} till ${end.format('HH:mm')}`,
+    start,
+    end,
     duration
   }
 };
 
-export const isBookable = (availability, end) => {
+const isBookable = (availability, end) => {
   if (availability.busy) {
     // Room is booked, no way to do ad-hoc meeting
     return false;
@@ -61,15 +62,15 @@ export const isBookable = (availability, end) => {
   }
 };
 
-export const bookedForDuration = (start, end) => {
-  return humanizeDuration(end.diff(start), {
+const bookedForDuration = (start, end) =>
+  humanizeDuration(end.diff(start), {
     delimiter: ' ',
     units: ['h', 'm'],
     round: true
   });
-};
 
-export const roundToNext15Minutes = (now) => {
+
+const roundToNext15Minutes = now => {
   const m = moment(now);
   let intervals = Math.floor(now.minutes() / 15);
   if (m.minutes() % 15 != 0)
@@ -111,3 +112,10 @@ You can contact ${process.env.MEETING_ORGANIZER_EMAIL} to cancel the meeting if 
   };
   return transport.sendMail(mail);
 };
+
+export {
+  bookedForDuration,
+  bookRoom,
+  isBookable,
+ roundToNext15Minutes
+}

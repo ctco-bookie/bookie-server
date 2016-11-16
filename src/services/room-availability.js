@@ -4,37 +4,37 @@ import _ from 'lodash';
 import moment from './moment';
 import humanizeDuration from 'humanize-duration';
 
-const THRESHOLD = 900000; // 15 mins threshold in millis
+const AVAILABILITY_THRESHOLD_MS = (1000 * 60) * 15;
 
-const getAvailability = async roomEmail => {
+const getAvailability = async email => {
   const calendarHost = process.env.CALENDAR_HOST;
 
-  const data = await promisify(ical.fromURL)(calendarHost.replace('${calendarName}', roomEmail), {});
+  const data = await promisify(ical.fromURL)(calendarHost.replace('${calendarName}', email), {});
   const events = findTodaysEvents(moment())(data);
 
   const currentEvent = getCurrentEvent(events);
-  let isBusy = !!currentEvent;
+  let busy = !!currentEvent;
 
   let nextEvent;
   if (!currentEvent) {
     nextEvent = getNextEvent(events);
   }
 
-  let availableForMillis = availableForDuration(nextEvent);
-  if( availableForMillis < THRESHOLD) {
-    isBusy = true;
+  const availableForMillis = availableForDuration(nextEvent);
+  if (availableForMillis < AVAILABILITY_THRESHOLD_MS) {
+    busy = true;
   }
 
   return {
-    email: roomEmail,
-    busy: isBusy,
-    availableForDuration: (isBusy) ? null : availableForMillis,
-    availableFor: (isBusy) ? null : availableFor(nextEvent),
-    availableFrom: (isBusy) ? availableFrom(events) : null
+    email,
+    busy,
+    availableForDuration: (busy) ? null : availableForMillis,
+    availableFor: (busy) ? null : availableFor(nextEvent),
+    availableFrom: (busy) ? availableFrom(events) : null
   };
 };
 
-export const findTodaysEvents = now => {
+const findTodaysEvents = now => {
   return data => {
     const events = _.filter(data, isEvent);
     const allEvents = _.flatten(_.map(events, handleReoccurringEvent(now)));
@@ -43,28 +43,27 @@ export const findTodaysEvents = now => {
   };
 };
 
-export const isEvent = event => event.type === 'VEVENT';
+const isEvent = event => event.type === 'VEVENT';
 
-export const handleReoccurringEvent = now => {
-  return event => {
-    if (!event.rrule) {
-      //single instance
-      return [event];
-    } else {
-      //reoccurring
-      const duration = moment.duration(moment(event.end).diff(moment(event.start)));
-      const exceptions = getExceptions(event);
-      const occurrences = _.map(event.rrule.between(now.startOf('day').toDate(), now.endOf('day').toDate()), d => moment(d));
-      const occurrencesWithoutExceptions = _.filter(occurrences, o => {
-        return !_.find(exceptions, e => e.isSame(o, 'minute'));
+const handleReoccurringEvent = now => event => {
+  if (!event.rrule) {
+    //single instance
+    return [event];
+  } else {
+    //reoccurring
+    const duration = moment.duration(moment(event.end).diff(moment(event.start)));
+    const exceptions = getExceptions(event);
+    const occurrences = _.map(event.rrule.between(now.startOf('day').toDate(), now.endOf('day').toDate()), d => moment(d));
+    const occurrencesWithoutExceptions = _.filter(occurrences, o => !_.find(exceptions, e => e.isSame(o, 'minute')));
+    return _.map(occurrencesWithoutExceptions, occurrence => {
+      const start = moment(occurrence);
+      const end = moment(start).add(duration);
+      return Object.assign({}, event, {
+        start: start.toDate(),
+        end: end.toDate()
       });
-      return _.map(occurrencesWithoutExceptions, occurrence => {
-        const start = moment(occurrence);
-        const end = moment(start).add(duration);
-        return Object.assign({}, event, {start: start.toDate(), end: end.toDate()})
-      });
-    }
-  };
+    });
+  }
 };
 
 const getExceptions = event => {
@@ -104,7 +103,7 @@ const availableFor = event => {
   });
 };
 
-const availableFrom = (events) => {
+const availableFrom = events => {
   const futureEvents = _.filter(events, event => {
     let now = moment();
     let end = moment(event.end);
@@ -116,7 +115,7 @@ const availableFrom = (events) => {
     let start = moment(futureEvents[i].start);
     let end = moment(futureEvents[i].end);
 
-    if (start.diff(availableFrom) < THRESHOLD) {
+    if (start.diff(availableFrom) < AVAILABILITY_THRESHOLD_MS) {
       availableFrom = end;
     }
   }
@@ -124,24 +123,23 @@ const availableFrom = (events) => {
   return availableFrom.format('HH:mm');
 };
 
-
-export const todayEvent = today => {
-  return event => {
-    if (!(event.start && event.end)) {
-      return false;
-    }
-    return today.startOf('day').isSame(moment(event.start).startOf('day'));
-  };
+const todayEvent = today => event => {
+  if (!(event.start && event.end)) {
+    return false;
+  }
+  return today.startOf('day').isSame(moment(event.start).startOf('day'));
 };
 
-function createEvent(event) {
-  return Object.assign({}, event, {
-    isPrivate: !event.summary,
-    oranizer: event.organizer && {
-      name: event.organizer.params.CN,
-      email: event.organizer.val
-    }
-  });
-}
+const createEvent = event => Object.assign({}, event, {
+  isPrivate: !event.summary,
+  organizer: event.organizer && {
+    name: event.organizer.params.CN,
+    email: event.organizer.val
+  }
+});
 
-export {getAvailability}
+export {
+  getAvailability,
+  todayEvent,
+  findTodaysEvents
+}
