@@ -1,6 +1,6 @@
 import ical from 'ical-generator';
 
-export const createICal = ({
+const createICal = ({
   start,
   end,
   organizerName,
@@ -29,3 +29,5 @@ export const createICal = ({
   });
   return cal.toString();
 };
+
+export {createICal}
