@@ -58,7 +58,7 @@ const isBookable = (availability, end) => {
   } else {
     //Room is free now, need to check if it is available
     const availableTill = moment().add(availability.availableForDuration);
-    return end.isSameOrBefore(availableTill);
+    return end.isSameOrBefore(availableTill, 'minute');
   }
 };
 

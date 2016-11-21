@@ -107,7 +107,7 @@ const availableFrom = events => {
   const futureEvents = _.filter(events, event => {
     let now = moment();
     let end = moment(event.end);
-    return now.isSameOrBefore(end);
+    return now.isSameOrBefore(end, 'minute');
   });
 
   let availableFrom = moment(futureEvents[0].end);
