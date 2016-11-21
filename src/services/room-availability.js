@@ -9,7 +9,14 @@ const AVAILABILITY_THRESHOLD_MS = (1000 * 60) * 15;
 const getAvailability = async email => {
   const calendarHost = process.env.CALENDAR_HOST;
 
-  const data = await promisify(ical.fromURL)(calendarHost.replace('${calendarName}', email), {});
+  const calendarUrl = calendarHost.replace('${calendarName}', email);
+  let data;
+  try {
+    data = await promisify(ical.fromURL)(calendarUrl, {});
+  } catch (e) {
+    console.log(`Calendar fetch error for ${calendarUrl}`, e);
+    return null; // This is a workaround for apollo client not setting the data prop on error
+  }
   const events = findTodaysEvents(moment())(data);
 
   const currentEvent = getCurrentEvent(events);
@@ -26,7 +33,6 @@ const getAvailability = async email => {
   }
 
   return {
-    email,
     busy,
     availableForDuration: (busy) ? null : availableForMillis,
     availableFor: (busy) ? null : availableFor(nextEvent),
