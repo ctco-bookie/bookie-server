@@ -7,7 +7,6 @@ COPY package.json /usr/src/app
 RUN npm install
 
 COPY . /usr/src/app
-#COPY ./docker.env /usr/src/app/.env
 
 EXPOSE 3000
 
